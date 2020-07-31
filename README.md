@@ -1,2 +1,2 @@
-# lowrezjam2020
+# Adventures of a pixel
 

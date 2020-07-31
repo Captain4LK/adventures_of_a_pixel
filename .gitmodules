@@ -1,0 +1,3 @@
+[submodule "SoftLK-lib"]
+	path = SoftLK-lib
+	url = https://codeberg.org/Captain4LK/SoftLK-lib.git
