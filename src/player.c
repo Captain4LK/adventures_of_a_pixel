@@ -52,11 +52,14 @@ void player_update()
       if(map_get_pixel(player.map_x,player.map_y,player.x-1,player.y).n==BLACK.n)
          player.x--;
    }
+   //-------------------------------------
 
    //Check if player has left map (x-axis)
    if(player.x>63)
    {
       player.x = 0;
+      player.rx = player.x;
+      player.ry = player.y;
       player.map_x++;
       
       terrain_needs_redraw = 1;
@@ -64,14 +67,18 @@ void player_update()
    else if(player.x<0)
    {
       player.x = 63;
+      player.rx = player.x;
+      player.ry = player.y;
       player.map_x--;
       
       terrain_needs_redraw = 1;
    }
+   //-------------------------------------
 
    //Gravity
    if(map_get_pixel(player.map_x,player.map_y,player.x,player.y+1).n==BLACK.n&&player.jump_time==0)
       player.y++;
+   //-------------------------------------
 
    //Jumping
    if(SLK_key_pressed(SLK_KEY_SPACE))
@@ -103,13 +110,35 @@ void player_update()
          player.jump_time = 0;
       }
    }
+   //-------------------------------------
 
+   //Check if player has left map (y-axis)
    if(player.y>63)
    {
       player.y = 0;
+      player.rx = player.x;
+      player.ry = player.y;
       player.map_y++;
 
       terrain_needs_redraw = 1;
+   }
+   if(player.y<0)
+   {
+      player.y = 63;
+      player.rx = player.x;
+      player.ry = player.y;
+      player.map_y--;
+
+      terrain_needs_redraw = 1;
+   }
+   //-------------------------------------
+
+   //Damage collision
+   if(SLK_rgb_sprite_get_pixel(SLK_layer_get(1)->type_1.target,player.x,player.y).a)
+   {
+      //TODO play sound
+      player.x = player.rx;
+      player.y = player.ry;
    }
 
    SLK_draw_rgb_color(player.x,player.y,player.color);

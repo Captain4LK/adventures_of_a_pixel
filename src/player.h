@@ -26,6 +26,8 @@ struct Player
    int map_y;
    int x;
    int y;
+   int rx;
+   int ry;
    int jump_time;
    int jumps;
    int double_jump_unlocked;

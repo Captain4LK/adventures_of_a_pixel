@@ -14,6 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 
 //External includes
+#include <time.h>
 #include "../SoftLK-lib/include/SLK/SLK.h"
 //-------------------------------------
 
@@ -81,6 +82,10 @@ int main(int argc, char **argv)
    SLK_draw_rgb_clear();
    SLK_draw_rgb_set_changed(1);
 
+   //Set seed
+   srand(time(NULL));
+
+   assets_load();
    maps_load();
 
    mode = 0;

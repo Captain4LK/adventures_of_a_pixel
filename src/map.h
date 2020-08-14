@@ -19,8 +19,37 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include "../SoftLK-lib/include/SLK/SLK.h"
 
-SLK_RGB_sprite *world[64][64];
+typedef struct
+{
+   int x;
+   int y;
+   int bx;
+   int by;
+   int dir;
+   int delay;
+}Spawner_fireball;
+
+typedef struct
+{
+   int x;
+   int y;
+   SLK_Color color;
+}Lava;
+
+typedef struct
+{
+   SLK_RGB_sprite *terrain;
+   int num_fireballs;
+   Spawner_fireball *fireballs;
+   int num_lava;
+   Lava *lava;
+}Map;
+
+Map world[64][64];
 void maps_load();
+void assets_load();
 SLK_Color map_get_pixel(int map_x, int map_y, int x, int y);
+SLK_Color damage_map_get_pixel(int map_x, int map_y, int x, int y);
+void map_update();
 
 #endif

@@ -43,7 +43,7 @@ void mode_0_update()
    if(terrain_needs_redraw)
    {
       SLK_layer_set_current(3);
-      SLK_draw_rgb_sprite(world[0][0],0,0);
+      SLK_draw_rgb_sprite(world[0][0].terrain,0,0);
       SLK_draw_rgb_set_changed(1);
       terrain_needs_redraw = 0;
    }
@@ -67,10 +67,15 @@ void mode_1_update()
    if(terrain_needs_redraw)
    {
       SLK_layer_set_current(3);
-      SLK_draw_rgb_sprite(world[player.map_y][player.map_x],0,0);
+      SLK_draw_rgb_sprite(world[player.map_y][player.map_x].terrain,0,0);
       SLK_draw_rgb_set_changed(1);
       terrain_needs_redraw = 0;
    }
+
+   SLK_layer_set_current(1);
+   SLK_draw_rgb_clear();
+   SLK_draw_rgb_set_changed(1);
+   map_update();
 
    SLK_layer_set_current(2);
    SLK_draw_rgb_clear();
