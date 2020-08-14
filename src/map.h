@@ -21,5 +21,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 SLK_RGB_sprite *world[64][64];
 void maps_load();
+SLK_Color map_get_pixel(int map_x, int map_y, int x, int y);
 
 #endif

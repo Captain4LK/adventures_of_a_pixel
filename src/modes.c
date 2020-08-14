@@ -40,13 +40,47 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 void mode_0_update()
 {
-
    if(terrain_needs_redraw)
    {
       SLK_layer_set_current(3);
-      SLK_draw_rgb_sprite(world[15][20],0,0);
+      SLK_draw_rgb_sprite(world[0][0],0,0);
       SLK_draw_rgb_set_changed(1);
       terrain_needs_redraw = 0;
+   }
+
+   if(SLK_key_pressed(SLK_KEY_S))
+   {
+      mode = 1;
+
+      player.color = SLK_color_create(196,241,41,255);
+      player.map_x = 20;
+      player.map_y = 15;
+      player.x = 32;
+      player.y = 38;
+      
+      terrain_needs_redraw = 1;
+   }
+}
+
+void mode_1_update()
+{
+   if(terrain_needs_redraw)
+   {
+      SLK_layer_set_current(3);
+      SLK_draw_rgb_sprite(world[player.map_y][player.map_x],0,0);
+      SLK_draw_rgb_set_changed(1);
+      terrain_needs_redraw = 0;
+   }
+
+   SLK_layer_set_current(2);
+   SLK_draw_rgb_clear();
+   SLK_draw_rgb_set_changed(1);
+   player_update();
+
+   if(SLK_key_down(SLK_KEY_CTRL)&&SLK_key_pressed(SLK_KEY_R))
+   {
+      maps_load();  
+      terrain_needs_redraw = 1;
    }
 }
 //-------------------------------------

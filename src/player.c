@@ -37,4 +37,81 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //-------------------------------------
 
 //Function implementations
+
+void player_update()
+{
+   //Player movement
+   if(SLK_key_down(SLK_KEY_D))
+   {
+      if(map_get_pixel(player.map_x,player.map_y,player.x+1,player.y).n==BLACK.n)
+         player.x++;
+   }
+
+   if(SLK_key_down(SLK_KEY_A))
+   {
+      if(map_get_pixel(player.map_x,player.map_y,player.x-1,player.y).n==BLACK.n)
+         player.x--;
+   }
+
+   //Check if player has left map (x-axis)
+   if(player.x>63)
+   {
+      player.x = 0;
+      player.map_x++;
+      
+      terrain_needs_redraw = 1;
+   }
+   else if(player.x<0)
+   {
+      player.x = 63;
+      player.map_x--;
+      
+      terrain_needs_redraw = 1;
+   }
+
+   //Gravity
+   if(map_get_pixel(player.map_x,player.map_y,player.x,player.y+1).n==BLACK.n&&player.jump_time==0)
+      player.y++;
+
+   //Jumping
+   if(SLK_key_pressed(SLK_KEY_SPACE))
+   {
+      if(map_get_pixel(player.map_x,player.map_y,player.x,player.y+1).n!=BLACK.n)
+      {
+         player.jump_time = 10;
+         player.jumps = player.double_jump_unlocked;
+      }
+      else if(player.jumps)
+      {
+         player.jump_time = 10;
+         player.jumps = 0;
+      }
+   }
+   if(player.jump_time>0&&player.jump_time<4)
+   {
+      player.jump_time--;
+   }
+   else if(player.jump_time>3)
+   {
+      if(map_get_pixel(player.map_x,player.map_y,player.x,player.y-1).n==BLACK.n)
+      {
+         player.y--;
+         player.jump_time--;
+      }
+      else
+      {
+         player.jump_time = 0;
+      }
+   }
+
+   if(player.y>63)
+   {
+      player.y = 0;
+      player.map_y++;
+
+      terrain_needs_redraw = 1;
+   }
+
+   SLK_draw_rgb_color(player.x,player.y,player.color);
+}
 //-------------------------------------

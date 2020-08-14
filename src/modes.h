@@ -21,5 +21,6 @@ int mode;
 int terrain_needs_redraw;
 
 void mode_0_update();
+void mode_1_update();
 
 #endif

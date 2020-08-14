@@ -43,7 +43,7 @@ int main(int argc, char **argv)
    SLK_setup(64,64,4,"LOWREZJAM 2020",1,SLK_WINDOW_MAX,0);
    SLK_mouse_set_relative(1);
    SLK_mouse_capture(1);
-   SLK_timer_set_fps(60);
+   SLK_timer_set_fps(20);
 
    //Layer 0: menu/hud/front general
    SLK_layer_create(0,SLK_LAYER_RGB);
@@ -94,6 +94,9 @@ int main(int argc, char **argv)
       {
       case 0: //Title screen
          mode_0_update(); 
+         break;
+      case 1: //Game
+         mode_1_update(); 
          break;
       }
 

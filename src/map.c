@@ -51,4 +51,12 @@ void maps_load()
    }
    SLK_rgb_sprite_destroy(map_sheet);
 }
+
+SLK_Color map_get_pixel(int map_x, int map_y, int x, int y)
+{
+   if(x<0||x>63||y<0||y>63)
+      return BLACK;
+
+   return world[map_y][map_x]->data[y*64+x];
+}
 //-------------------------------------

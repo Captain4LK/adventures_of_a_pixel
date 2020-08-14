@@ -17,6 +17,21 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #define _PLAYER_H_
 
+#include "../SoftLK-lib/include/SLK/SLK.h"
 
+struct Player
+{
+   SLK_Color color;
+   int map_x;
+   int map_y;
+   int x;
+   int y;
+   int jump_time;
+   int jumps;
+   int double_jump_unlocked;
+};
+struct Player player;
+
+void player_update();
 
 #endif
