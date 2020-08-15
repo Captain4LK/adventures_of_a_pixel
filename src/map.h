@@ -38,11 +38,20 @@ typedef struct
 
 typedef struct
 {
+   int type;
+}Unlock;
+
+typedef struct
+{
    SLK_RGB_sprite *terrain;
    int num_fireballs;
    Spawner_fireball *fireballs;
    int num_lava;
    Lava *lava;
+   int num_unlocks;
+   int unlocked;
+   Unlock *unlocks;
+   int music;
 }Map;
 
 Map world[64][64];
@@ -51,5 +60,6 @@ void assets_load();
 SLK_Color map_get_pixel(int map_x, int map_y, int x, int y);
 SLK_Color damage_map_get_pixel(int map_x, int map_y, int x, int y);
 void map_update();
+void map_update_fireballs();
 
 #endif

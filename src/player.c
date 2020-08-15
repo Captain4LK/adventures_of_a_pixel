@@ -14,6 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 
 //External includes
+#include <SDL2/SDL_mixer.h>
 #include "../SoftLK-lib/include/SLK/SLK.h"
 //-------------------------------------
 
@@ -21,6 +22,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "config.h"
 #include "map.h"
 #include "modes.h"
+#include "sound.h"
 #include "player.h"
 //-------------------------------------
 
@@ -41,16 +43,19 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 void player_update()
 {
    //Player movement
-   if(SLK_key_down(SLK_KEY_D))
+   if(player.move_unlocked)
    {
-      if(map_get_pixel(player.map_x,player.map_y,player.x+1,player.y).n==BLACK.n)
-         player.x++;
-   }
+      if(SLK_key_down(SLK_KEY_D))
+      {
+         if(map_get_pixel(player.map_x,player.map_y,player.x+1,player.y).n==BLACK.n)
+            player.x++;
+      }
 
-   if(SLK_key_down(SLK_KEY_A))
-   {
-      if(map_get_pixel(player.map_x,player.map_y,player.x-1,player.y).n==BLACK.n)
-         player.x--;
+      if(SLK_key_down(SLK_KEY_A))
+      {
+         if(map_get_pixel(player.map_x,player.map_y,player.x-1,player.y).n==BLACK.n)
+            player.x--;
+      }
    }
    //-------------------------------------
 
@@ -81,17 +86,19 @@ void player_update()
    //-------------------------------------
 
    //Jumping
-   if(SLK_key_pressed(SLK_KEY_SPACE))
+   if(player.jump_unlocked&&SLK_key_pressed(SLK_KEY_SPACE))
    {
       if(map_get_pixel(player.map_x,player.map_y,player.x,player.y+1).n!=BLACK.n)
       {
          player.jump_time = 10;
          player.jumps = player.double_jump_unlocked;
+         Mix_PlayChannel(-1,sound_jump,0);
       }
       else if(player.jumps)
       {
          player.jump_time = 10;
          player.jumps = 0;
+         Mix_PlayChannel(-1,sound_jump,0);
       }
    }
    if(player.jump_time>0&&player.jump_time<4)
@@ -136,9 +143,9 @@ void player_update()
    //Damage collision
    if(SLK_rgb_sprite_get_pixel(SLK_layer_get(1)->type_1.target,player.x,player.y).a)
    {
-      //TODO play sound
       player.x = player.rx;
       player.y = player.ry;
+      Mix_PlayChannel(-1,sound_die,0);
    }
 
    SLK_draw_rgb_color(player.x,player.y,player.color);

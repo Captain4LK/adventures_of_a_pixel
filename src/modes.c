@@ -14,6 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 
 //External includes
+#include <SDL2/SDL_mixer.h>
 #include "../SoftLK-lib/include/SLK/SLK.h"
 //-------------------------------------
 
@@ -21,6 +22,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "config.h"
 #include "map.h"
 #include "modes.h"
+#include "sound.h"
 #include "player.h"
 //-------------------------------------
 
@@ -59,6 +61,8 @@ void mode_0_update()
       player.y = 38;
       
       terrain_needs_redraw = 1;
+
+      //Mix_PlayMusic(music[current_music],-1);
    }
 }
 

@@ -13,29 +13,17 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef _PLAYER_H_
+#ifndef _SOUND_H_
 
-#define _PLAYER_H_
+#define _SOUND_H_
 
-#include "../SoftLK-lib/include/SLK/SLK.h"
+#include <SDL2/SDL_mixer.h>
 
-struct Player
-{
-   SLK_Color color;
-   int map_x;
-   int map_y;
-   int x;
-   int y;
-   int rx;
-   int ry;
-   int jump_time;
-   int jumps;
-   int double_jump_unlocked;
-   int move_unlocked;
-   int jump_unlocked;
-};
-struct Player player;
+int current_music;
+Mix_Music *music[2];
 
-void player_update();
+Mix_Chunk *sound_jump;
+Mix_Chunk *sound_die;
+Mix_Chunk *sound_fireball;
 
 #endif

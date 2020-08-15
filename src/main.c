@@ -16,12 +16,14 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //External includes
 #include <time.h>
 #include "../SoftLK-lib/include/SLK/SLK.h"
+#include <SDL2/SDL_mixer.h>
 //-------------------------------------
 
 //Internal includes
 #include "config.h"
 #include "player.h"
 #include "modes.h"
+#include "sound.h"
 #include "map.h"
 //-------------------------------------
 
@@ -41,9 +43,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 int main(int argc, char **argv)
 {
-   SLK_setup(64,64,4,"LOWREZJAM 2020",1,SLK_WINDOW_MAX,0);
-   SLK_mouse_set_relative(1);
-   SLK_mouse_capture(1);
+   SLK_setup(64,64,4,"LOWREZJAM 2020",0,SLK_WINDOW_MAX,0);
    SLK_timer_set_fps(20);
 
    //Layer 0: menu/hud/front general
@@ -81,6 +81,17 @@ int main(int argc, char **argv)
    SLK_draw_rgb_set_clear_color(SLK_color_create(0,0,0,0));
    SLK_draw_rgb_clear();
    SLK_draw_rgb_set_changed(1);
+
+   if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048 )<0)
+        printf("Error: SDL_mixer failed to initialize! SDL_mixer Error: %s\n",Mix_GetError());
+
+   //Load sounds and music
+   current_music = -1;
+   music[0] = Mix_LoadMUS("assets/music0.ogg");
+   music[1] = Mix_LoadMUS("assets/music1.ogg");
+   sound_jump = Mix_LoadWAV("assets/jump.wav");
+   sound_die = Mix_LoadWAV("assets/die.wav");
+   sound_fireball = Mix_LoadWAV("assets/fireball.wav");
 
    //Set seed
    srand(time(NULL));

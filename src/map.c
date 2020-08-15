@@ -14,6 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 
 //External includes
+#include <SDL2/SDL_mixer.h>
 #include "../SoftLK-lib/include/SLK/SLK.h"
 //-------------------------------------
 
@@ -21,6 +22,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "config.h"
 #include "map.h"
 #include "player.h"
+#include "sound.h"
 #include "modes.h"
 //-------------------------------------
 
@@ -58,6 +60,12 @@ void maps_load()
          if(world[y][x].lava)
             free(world[y][x].lava);
 
+         world[y][x].num_unlocks = 0;
+         if(world[y][x].unlocks)
+            free(world[y][x].unlocks);
+
+         world[y][x].music = -1;
+
          for(int i = 0;i<64*64;i++)
          {
             int alpha = world[y][x].terrain->data[i].a;
@@ -65,6 +73,12 @@ void maps_load()
                world[y][x].num_fireballs++;
             else if(alpha==250)
                world[y][x].num_lava++;
+            else if(alpha==100)
+               world[y][x].music = 0;
+            else if(alpha==101)
+               world[y][x].music = 1;
+            else if(alpha==1||alpha==2||alpha==3)
+               world[y][x].num_unlocks++;
          }
          
          //Create fireball spawners
@@ -74,6 +88,11 @@ void maps_load()
          //Create lava objects
          world[y][x].lava = malloc(sizeof(Lava)*world[y][x].num_lava);
          world[y][x].num_lava = 0;
+
+         //Create unlocks
+         world[y][x].unlocks = malloc(sizeof(Unlock)*world[y][x].num_unlocks);
+         world[y][x].unlocked = 0;
+         world[y][x].num_unlocks = 0;
 
          //Iterate again and actually load the spawners, enemies, etc
          for(int ty = 0;ty<64;ty++)
@@ -94,7 +113,7 @@ void maps_load()
                   world[y][x].fireballs[world[y][x].num_fireballs].x = tx;
                   world[y][x].fireballs[world[y][x].num_fireballs].y = ty;
                   world[y][x].fireballs[world[y][x].num_fireballs].bx = tx;
-                  world[y][x].fireballs[world[y][x].num_fireballs].by = ty;
+                  world[y][x].fireballs[world[y][x].num_fireballs].by = ty+2;
                   world[y][x].num_fireballs++;
 
                   break;
@@ -104,7 +123,7 @@ void maps_load()
                   world[y][x].fireballs[world[y][x].num_fireballs].x = tx;
                   world[y][x].fireballs[world[y][x].num_fireballs].y = ty;
                   world[y][x].fireballs[world[y][x].num_fireballs].bx = tx;
-                  world[y][x].fireballs[world[y][x].num_fireballs].by = ty;
+                  world[y][x].fireballs[world[y][x].num_fireballs].by = ty-2;
                   world[y][x].num_fireballs++;
 
                   break;
@@ -113,7 +132,7 @@ void maps_load()
                   world[y][x].fireballs[world[y][x].num_fireballs].dir = 2;
                   world[y][x].fireballs[world[y][x].num_fireballs].x = tx;
                   world[y][x].fireballs[world[y][x].num_fireballs].y = ty;
-                  world[y][x].fireballs[world[y][x].num_fireballs].bx = tx;
+                  world[y][x].fireballs[world[y][x].num_fireballs].bx = tx+2;
                   world[y][x].fireballs[world[y][x].num_fireballs].by = ty;
                   world[y][x].num_fireballs++;
 
@@ -123,7 +142,7 @@ void maps_load()
                   world[y][x].fireballs[world[y][x].num_fireballs].dir = 3;
                   world[y][x].fireballs[world[y][x].num_fireballs].x = tx;
                   world[y][x].fireballs[world[y][x].num_fireballs].y = ty;
-                  world[y][x].fireballs[world[y][x].num_fireballs].bx = tx;
+                  world[y][x].fireballs[world[y][x].num_fireballs].bx = tx-2;
                   world[y][x].fireballs[world[y][x].num_fireballs].by = ty;
                   world[y][x].num_fireballs++;
 
@@ -134,6 +153,21 @@ void maps_load()
                   world[y][x].lava[world[y][x].num_lava].color = world[y][x].terrain->data[ty*64+tx];
                   world[y][x].terrain->data[ty*64+tx] = BLACK;
                   world[y][x].num_lava++;
+
+                  break;
+               case 1:
+                  world[y][x].unlocks[world[y][x].num_unlocks].type = 0;
+                  world[y][x].num_unlocks++;
+
+                  break;
+               case 2:
+                  world[y][x].unlocks[world[y][x].num_unlocks].type = 1;
+                  world[y][x].num_unlocks++;
+
+                  break;
+               case 3:
+                  world[y][x].unlocks[world[y][x].num_unlocks].type = 2;
+                  world[y][x].num_unlocks++;
 
                   break;
                }
@@ -164,6 +198,47 @@ void assets_load()
 
 void map_update()
 {
+   map_update_fireballs();
+
+   //Draw lava pits
+   for(int i = 0;i<world[player.map_y][player.map_x].num_lava;i++)
+      SLK_draw_rgb_color(world[player.map_y][player.map_x].lava[i].x,world[player.map_y][player.map_x].lava[i].y,world[player.map_y][player.map_x].lava[i].color);
+
+   //Activate unlocks
+   if(!world[player.map_y][player.map_x].unlocked)
+   {
+      for(int i = 0;i<world[player.map_y][player.map_x].num_unlocks;i++)
+      {
+         switch(world[player.map_y][player.map_x].unlocks[i].type)
+         {
+         case 0: //Movement
+            player.move_unlocked = 1;
+            break;
+         case 1: //Jump
+            player.jump_unlocked = 1;
+            break;
+         case 2: //Double jump
+            player.double_jump_unlocked = 1;
+            break;
+         }
+      }
+
+      world[player.map_y][player.map_x].unlocked = 1;
+   }
+
+   //Choose right music
+   if(world[player.map_y][player.map_x].music!=-1&&current_music!=world[player.map_y][player.map_x].music)
+   {
+      if(Mix_PlayingMusic())
+         Mix_HaltMusic();
+
+      current_music = world[player.map_y][player.map_x].music; 
+      Mix_PlayMusic(music[current_music],-1);
+   }
+}
+
+void map_update_fireballs()
+{
    //Update fireballs
    for(int i = 0;i<world[player.map_y][player.map_x].num_fireballs;i++)
    {
@@ -172,66 +247,56 @@ void map_update()
       if(f->delay)
       {
          f->delay--;
+         if(f->delay==1)
+            Mix_PlayChannel(-1,sound_fireball,0);
       }
       else 
       {
          switch(f->dir)
          {
          case 0:
-            if(map_get_pixel(player.map_x,player.map_y,f->bx,f->by+2).n!=BLACK.n)
+            if(f->by>64)
             {
-               f->by = f->y+1;
-               f->delay = 8;
+               f->by = f->y+2;
+               Mix_PlayChannel(-1,sound_fireball,0);
             }
             else
-            {
                f->by++;
-            }
 
             break;
          case 1:
-            if(map_get_pixel(player.map_x,player.map_y,f->bx,f->by).n!=BLACK.n)
+            if(f->by<0)
             {
-               f->by = f->y-3;
-               f->delay = 8;
+               f->by = f->y-2;
+               Mix_PlayChannel(-1,sound_fireball,0);
             }
             else
-            {
                f->by--;
-            }
 
             break;
          case 2:
-            if(map_get_pixel(player.map_x,player.map_y,f->bx+2,f->by).n!=BLACK.n)
+            if(f->bx>64)
             {
-               f->bx = f->x+1;
-               f->delay = 8;
+               f->bx = f->x+2;
+               Mix_PlayChannel(-1,sound_fireball,0);
             }
             else
-            {
                f->bx++;
-            }
             break;
          case 3:
-            if(map_get_pixel(player.map_x,player.map_y,f->bx-2,f->by).n!=BLACK.n)
+            if(f->bx<0)
             {
-               f->bx = f->x-1;
-               f->delay = 8;
+               f->bx = f->x-2;
+               Mix_PlayChannel(-1,sound_fireball,0);
             }
             else
-            {
                f->bx--;
-            }
             break;
          }
       }
 
-      SLK_draw_rgb_sprite(sprites[f->dir],f->bx-1,f->by);
+      SLK_draw_rgb_sprite(sprites[f->dir],f->bx-1,f->by-1);
    }
-
-   //Draw lava pits
-   for(int i = 0;i<world[player.map_y][player.map_x].num_lava;i++)
-      SLK_draw_rgb_color(world[player.map_y][player.map_x].lava[i].x,world[player.map_y][player.map_x].lava[i].y,world[player.map_y][player.map_x].lava[i].color);
 }
 
 SLK_Color map_get_pixel(int map_x, int map_y, int x, int y)
