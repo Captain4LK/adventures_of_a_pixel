@@ -43,6 +43,14 @@ typedef struct
 
 typedef struct
 {
+  int x;
+  int y;
+  int dir;
+  int ground_dir;
+}Enemie;
+
+typedef struct
+{
    SLK_RGB_sprite *terrain;
    int num_fireballs;
    Spawner_fireball *fireballs;
@@ -51,6 +59,8 @@ typedef struct
    int num_unlocks;
    int unlocked;
    Unlock *unlocks;
+   int num_enemies;
+   Enemie *enemies;
    int music;
 }Map;
 
@@ -61,5 +71,6 @@ SLK_Color map_get_pixel(int map_x, int map_y, int x, int y);
 SLK_Color damage_map_get_pixel(int map_x, int map_y, int x, int y);
 void map_update();
 void map_update_fireballs();
+void map_update_enemies();
 
 #endif

@@ -37,6 +37,7 @@ static SLK_RGB_sprite *sprites[4];
 //-------------------------------------
 
 //Function prototypes
+static void choose_new_dir(Enemie *e);
 //-------------------------------------
 
 //Function implementations
@@ -64,6 +65,10 @@ void maps_load()
          if(world[y][x].unlocks)
             free(world[y][x].unlocks);
 
+         world[y][x].num_enemies = 0;
+         if(world[y][x].enemies)
+            free(world[y][x].enemies);
+
          world[y][x].music = -1;
 
          for(int i = 0;i<64*64;i++)
@@ -73,6 +78,8 @@ void maps_load()
                world[y][x].num_fireballs++;
             else if(alpha==250)
                world[y][x].num_lava++;
+            else if(alpha==249||alpha==248||alpha==247||alpha==246)
+               world[y][x].num_enemies++;
             else if(alpha==100)
                world[y][x].music = 0;
             else if(alpha==101)
@@ -93,6 +100,10 @@ void maps_load()
          world[y][x].unlocks = malloc(sizeof(Unlock)*world[y][x].num_unlocks);
          world[y][x].unlocked = 0;
          world[y][x].num_unlocks = 0;
+
+         //Create enemies
+         world[y][x].enemies = malloc(sizeof(Enemie)*world[y][x].num_enemies);
+         world[y][x].num_enemies = 0;
 
          //Iterate again and actually load the spawners, enemies, etc
          for(int ty = 0;ty<64;ty++)
@@ -155,6 +166,54 @@ void maps_load()
                   world[y][x].num_lava++;
 
                   break;
+               case 249: //Left
+                  world[y][x].enemies[world[y][x].num_enemies].x = tx;
+                  world[y][x].enemies[world[y][x].num_enemies].y = ty;
+                  world[y][x].enemies[world[y][x].num_enemies].dir = 0;
+                  if(map_get_pixel(x,y,tx,ty-1).n==BLACK.n)
+                     world[y][x].enemies[world[y][x].num_enemies].ground_dir = 1; //Ground below
+                  else 
+                     world[y][x].enemies[world[y][x].num_enemies].ground_dir = -1; //Ground above
+                  world[y][x].terrain->data[ty*64+tx] = BLACK;
+                  world[y][x].num_enemies++;
+
+                  break;
+               case 248: //Right
+                  world[y][x].enemies[world[y][x].num_enemies].x = tx;
+                  world[y][x].enemies[world[y][x].num_enemies].y = ty;
+                  world[y][x].enemies[world[y][x].num_enemies].dir = 1;
+                  if(map_get_pixel(x,y,tx,ty-1).n==BLACK.n)
+                     world[y][x].enemies[world[y][x].num_enemies].ground_dir = 1; //Ground below
+                  else 
+                     world[y][x].enemies[world[y][x].num_enemies].ground_dir = -1; //Ground above
+                  world[y][x].terrain->data[ty*64+tx] = BLACK;
+                  world[y][x].num_enemies++;
+
+                  break;
+               case 247: //Up
+                  world[y][x].enemies[world[y][x].num_enemies].x = tx;
+                  world[y][x].enemies[world[y][x].num_enemies].y = ty;
+                  world[y][x].enemies[world[y][x].num_enemies].dir = 2;
+                  if(map_get_pixel(x,y,tx-1,ty).n==BLACK.n)
+                     world[y][x].enemies[world[y][x].num_enemies].ground_dir = 1; //Ground right
+                  else 
+                     world[y][x].enemies[world[y][x].num_enemies].ground_dir = -1; //Ground left
+                  world[y][x].terrain->data[ty*64+tx] = BLACK;
+                  world[y][x].num_enemies++;
+
+                  break;
+               case 246: //Down
+                  world[y][x].enemies[world[y][x].num_enemies].x = tx;
+                  world[y][x].enemies[world[y][x].num_enemies].y = ty;
+                  world[y][x].enemies[world[y][x].num_enemies].dir = 3;
+                  if(map_get_pixel(x,y,tx-1,ty).n==BLACK.n)
+                     world[y][x].enemies[world[y][x].num_enemies].ground_dir = 1; //Ground right
+                  else 
+                     world[y][x].enemies[world[y][x].num_enemies].ground_dir = -1; //Ground left
+                  world[y][x].terrain->data[ty*64+tx] = BLACK;
+                  world[y][x].num_enemies++;
+
+                  break;
                case 1:
                   world[y][x].unlocks[world[y][x].num_unlocks].type = 0;
                   world[y][x].num_unlocks++;
@@ -198,11 +257,12 @@ void assets_load()
 
 void map_update()
 {
-   map_update_fireballs();
-
    //Draw lava pits
    for(int i = 0;i<world[player.map_y][player.map_x].num_lava;i++)
       SLK_draw_rgb_color(world[player.map_y][player.map_x].lava[i].x,world[player.map_y][player.map_x].lava[i].y,world[player.map_y][player.map_x].lava[i].color);
+
+   map_update_enemies();
+   map_update_fireballs();
 
    //Activate unlocks
    if(!world[player.map_y][player.map_x].unlocked)
@@ -299,11 +359,95 @@ void map_update_fireballs()
    }
 }
 
+void map_update_enemies()
+{
+
+   for(int i = 0;i<world[player.map_y][player.map_x].num_enemies;i++)
+   {
+      Enemie *e = &world[player.map_y][player.map_x].enemies[i];
+
+      switch(e->dir)
+      {
+      case 0:
+         if(map_get_pixel(player.map_x,player.map_y,e->x-1,e->y).n==BLACK.n&&map_get_pixel(player.map_x,player.map_y,e->x,e->y+e->ground_dir).n!=BLACK.n)
+            e->x--;
+         else
+            choose_new_dir(e);
+
+         break;
+      case 1:
+         if(map_get_pixel(player.map_x,player.map_y,e->x+1,e->y).n==BLACK.n&&map_get_pixel(player.map_x,player.map_y,e->x,e->y+e->ground_dir).n!=BLACK.n)
+            e->x++;
+         else
+            choose_new_dir(e);
+
+         break;
+      case 2:
+         if(map_get_pixel(player.map_x,player.map_y,e->x,e->y-1).n==BLACK.n&&map_get_pixel(player.map_x,player.map_y,e->x+e->ground_dir,e->y).n!=BLACK.n)
+            e->y--;
+         else
+            choose_new_dir(e);
+
+         break;
+      case 3:
+         if(map_get_pixel(player.map_x,player.map_y,e->x,e->y+1).n==BLACK.n&&map_get_pixel(player.map_x,player.map_y,e->x+e->ground_dir,e->y).n!=BLACK.n)
+            e->y++;
+         else
+            choose_new_dir(e);
+
+         break;
+      }
+
+      SLK_draw_rgb_color(e->x,e->y,SLK_color_create(241,100,31,255));
+   }
+
+}
+
 SLK_Color map_get_pixel(int map_x, int map_y, int x, int y)
 {
    if(x<0||x>63||y<0||y>63)
       return BLACK;
 
    return world[map_y][map_x].terrain->data[y*64+x];
+}
+
+static void choose_new_dir(Enemie *e)
+{
+   if(e->dir!=0&&e->dir!=1&&map_get_pixel(player.map_x,player.map_y,e->x-1,e->y).n==BLACK.n&&(map_get_pixel(player.map_x,player.map_y,e->x-1,e->y+1).n!=BLACK.n||map_get_pixel(player.map_x,player.map_y,e->x-1,e->y-1).n!=BLACK.n)) //Left
+   {
+      e->dir = 0;  
+      if(map_get_pixel(player.map_x,player.map_y,e->x-1,e->y-1).n==BLACK.n)
+         e->ground_dir = 1; //Ground below
+      else 
+         e->ground_dir = -1; //Ground above
+      e->x--;
+   }
+   else if(e->dir!=1&&e->dir!=0&&map_get_pixel(player.map_x,player.map_y,e->x+1,e->y).n==BLACK.n&&(map_get_pixel(player.map_x,player.map_y,e->x+1,e->y+1).n!=BLACK.n||map_get_pixel(player.map_x,player.map_y,e->x+1,e->y-1).n!=BLACK.n)) //Right
+   {
+      e->dir = 1;  
+      if(map_get_pixel(player.map_x,player.map_y,e->x+1,e->y-1).n==BLACK.n)
+         e->ground_dir = 1; //Ground below
+      else 
+         e->ground_dir = -1; //Ground above
+      e->x++;
+   }
+   else if(e->dir!=2&&e->dir!=3&&map_get_pixel(player.map_x,player.map_y,e->x,e->y-1).n==BLACK.n&&(map_get_pixel(player.map_x,player.map_y,e->x+1,e->y-1).n!=BLACK.n||map_get_pixel(player.map_x,player.map_y,e->x-1,e->y-1).n!=BLACK.n)) //Up
+   {
+      e->dir = 2;  
+      if(map_get_pixel(player.map_x,player.map_y,e->x-1,e->y-1).n==BLACK.n)
+         e->ground_dir = 1; //Ground below
+      else 
+         e->ground_dir = -1; //Ground above
+      e->y--;
+   }
+   else if(e->dir!=3&&e->dir!=2&&map_get_pixel(player.map_x,player.map_y,e->x,e->y+1).n==BLACK.n&&(map_get_pixel(player.map_x,player.map_y,e->x+1,e->y+1).n!=BLACK.n||map_get_pixel(player.map_x,player.map_y,e->x-1,e->y+1).n!=BLACK.n)) //Down
+   {
+      e->dir = 3;  
+      if(map_get_pixel(player.map_x,player.map_y,e->x-1,e->y+1).n==BLACK.n)
+         e->ground_dir = 1; //Ground below
+      else 
+         e->ground_dir = -1; //Ground above
+      e->y++;
+   }
 }
 //-------------------------------------
