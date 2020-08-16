@@ -5,9 +5,8 @@
 ![video](screenshots/video.gif)
 
 ## Be the pixel
-===
 
-A tiny plattform made for lowrezjam 2020.
+A tiny plattformer made for lowrezjam 2020. Get it on [itch.io](https://captain4lk.itch.io/adventures-of-a-pixel) (the windows version atlest)!
 
 ## Used assets/music
 
