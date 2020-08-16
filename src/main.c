@@ -43,7 +43,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 int main(int argc, char **argv)
 {
-   SLK_setup(64,64,4,"LOWREZJAM 2020",0,4,0);
+   SLK_setup(64,64,4,"LOWREZJAM 2020",0,SLK_WINDOW_MAX,0);
    SLK_timer_set_fps(20);
 
    //Layer 0: menu/hud/front general
