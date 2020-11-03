@@ -64,7 +64,8 @@ typedef struct
    int music;
 }Map;
 
-Map world[64][64];
+extern Map world[64][64];
+
 void maps_load();
 void assets_load();
 SLK_Color map_get_pixel(int map_x, int map_y, int x, int y);

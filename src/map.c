@@ -34,10 +34,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 //Variables
 static SLK_RGB_sprite *sprites[4];
+Map world[64][64];
 //-------------------------------------
 
 //Function prototypes
 static void choose_new_dir(Enemie *e);
+static void map_parse_screen(SLK_RGB_sprite *screen, int x, int y);
 //-------------------------------------
 
 //Function implementations
@@ -53,57 +55,7 @@ void maps_load()
          world[y][x].terrain = SLK_rgb_sprite_create(64,64);
          SLK_rgb_sprite_copy_partial(world[y][x].terrain,map_sheet,0,0,x*64,y*64,64,64);
 
-         world[y][x].num_fireballs = 0;
-         if(world[y][x].fireballs)
-            free(world[y][x].fireballs);
-
-         world[y][x].num_lava = 0;
-         if(world[y][x].lava)
-            free(world[y][x].lava);
-
-         world[y][x].num_unlocks = 0;
-         if(world[y][x].unlocks)
-            free(world[y][x].unlocks);
-
-         world[y][x].num_enemies = 0;
-         if(world[y][x].enemies)
-            free(world[y][x].enemies);
-
-         world[y][x].music = -1;
-
-         for(int i = 0;i<64*64;i++)
-         {
-            int alpha = world[y][x].terrain->data[i].a;
-            if(alpha==254||alpha==253||alpha==252||alpha==251) //Fireball spawner
-               world[y][x].num_fireballs++;
-            else if(alpha==250)
-               world[y][x].num_lava++;
-            else if(alpha==249||alpha==248||alpha==247||alpha==246)
-               world[y][x].num_enemies++;
-            else if(alpha==100)
-               world[y][x].music = 0;
-            else if(alpha==101)
-               world[y][x].music = 1;
-            else if(alpha==1||alpha==2||alpha==3)
-               world[y][x].num_unlocks++;
-         }
-         
-         //Create fireball spawners
-         world[y][x].fireballs = malloc(sizeof(Spawner_fireball)*world[y][x].num_fireballs);
-         world[y][x].num_fireballs = 0; //Reuse as counter
-         
-         //Create lava objects
-         world[y][x].lava = malloc(sizeof(Lava)*world[y][x].num_lava);
-         world[y][x].num_lava = 0;
-
-         //Create unlocks
-         world[y][x].unlocks = malloc(sizeof(Unlock)*world[y][x].num_unlocks);
-         world[y][x].unlocked = 0;
-         world[y][x].num_unlocks = 0;
-
-         //Create enemies
-         world[y][x].enemies = malloc(sizeof(Enemie)*world[y][x].num_enemies);
-         world[y][x].num_enemies = 0;
+         map_parse_screen(world[y][x].terrain,x,y);
 
          //Iterate again and actually load the spawners, enemies, etc
          for(int ty = 0;ty<64;ty++)
@@ -449,5 +401,60 @@ static void choose_new_dir(Enemie *e)
          e->ground_dir = -1; //Ground above
       e->y++;
    }
+}
+
+static void map_parse_screen(SLK_RGB_sprite *screen, int x, int y)
+{
+   world[y][x].num_fireballs = 0;
+   if(world[y][x].fireballs)
+   free(world[y][x].fireballs);
+
+   world[y][x].num_lava = 0;
+   if(world[y][x].lava)
+   free(world[y][x].lava);
+
+   world[y][x].num_unlocks = 0;
+   if(world[y][x].unlocks)
+   free(world[y][x].unlocks);
+
+   world[y][x].num_enemies = 0;
+   if(world[y][x].enemies)
+   free(world[y][x].enemies);
+
+   world[y][x].music = -1;
+
+   for(int i = 0;i<64*64;i++)
+   {
+      int alpha = screen->data[i].a;
+      if(alpha==254||alpha==253||alpha==252||alpha==251) //Fireball spawner
+         world[y][x].num_fireballs++;
+      else if(alpha==250)
+         world[y][x].num_lava++;
+      else if(alpha==249||alpha==248||alpha==247||alpha==246)
+         world[y][x].num_enemies++;
+      else if(alpha==100)
+         world[y][x].music = 0;
+      else if(alpha==101)
+         world[y][x].music = 1;
+      else if(alpha==1||alpha==2||alpha==3)
+         world[y][x].num_unlocks++;
+   }
+   
+   //Create fireball spawners
+   world[y][x].fireballs = malloc(sizeof(Spawner_fireball)*world[y][x].num_fireballs);
+   world[y][x].num_fireballs = 0; //Reuse as counter
+   
+   //Create lava objects
+   world[y][x].lava = malloc(sizeof(Lava)*world[y][x].num_lava);
+   world[y][x].num_lava = 0;
+
+   //Create unlocks
+   world[y][x].unlocks = malloc(sizeof(Unlock)*world[y][x].num_unlocks);
+   world[y][x].unlocked = 0;
+   world[y][x].num_unlocks = 0;
+
+   //Create enemies
+   world[y][x].enemies = malloc(sizeof(Enemie)*world[y][x].num_enemies);
+   world[y][x].num_enemies = 0;
 }
 //-------------------------------------

@@ -34,7 +34,7 @@ struct Player
    int move_unlocked;
    int jump_unlocked;
 };
-struct Player player;
+extern struct Player player;
 
 void player_update();
 

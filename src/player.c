@@ -33,6 +33,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //-------------------------------------
 
 //Variables
+struct Player player;
 //-------------------------------------
 
 //Function prototypes
@@ -45,13 +46,13 @@ void player_update()
    //Player movement
    if(player.move_unlocked)
    {
-      if(SLK_key_down(SLK_KEY_D))
+      if(SLK_key_down(SLK_KEY_D)||SLK_gamepad_down(0,SLK_PAD_RIGHT))
       {
          if(map_get_pixel(player.map_x,player.map_y,player.x+1,player.y).n==BLACK.n)
             player.x++;
       }
 
-      if(SLK_key_down(SLK_KEY_A))
+      if(SLK_key_down(SLK_KEY_A)||SLK_gamepad_down(0,SLK_PAD_LEFT))
       {
          if(map_get_pixel(player.map_x,player.map_y,player.x-1,player.y).n==BLACK.n)
             player.x--;
@@ -86,7 +87,7 @@ void player_update()
    //-------------------------------------
 
    //Jumping
-   if(player.jump_unlocked&&SLK_key_pressed(SLK_KEY_SPACE))
+   if(player.jump_unlocked&&(SLK_key_pressed(SLK_KEY_SPACE)||SLK_gamepad_pressed(0,SLK_PAD_A)))
    {
       if(map_get_pixel(player.map_x,player.map_y,player.x,player.y+1).n!=BLACK.n)
       {

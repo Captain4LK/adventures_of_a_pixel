@@ -17,8 +17,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #define _MODES_H_
 
-int mode;
-int terrain_needs_redraw;
+extern int mode;
+extern int terrain_needs_redraw;
 
 void mode_0_update();
 void mode_1_update();

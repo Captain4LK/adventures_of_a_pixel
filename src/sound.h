@@ -19,11 +19,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include <SDL2/SDL_mixer.h>
 
-int current_music;
-Mix_Music *music[2];
+extern int current_music;
+extern Mix_Music *music[2];
 
-Mix_Chunk *sound_jump;
-Mix_Chunk *sound_die;
-Mix_Chunk *sound_fireball;
+extern Mix_Chunk *sound_jump;
+extern Mix_Chunk *sound_die;
+extern Mix_Chunk *sound_fireball;
 
 #endif
