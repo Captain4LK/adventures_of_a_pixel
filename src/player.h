@@ -17,8 +17,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #define _PLAYER_H_
 
-#include "../SoftLK-lib/include/SLK/SLK.h"
-
 struct Player
 {
    SLK_Color color;

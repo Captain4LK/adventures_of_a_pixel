@@ -15,7 +15,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 //External includes
 #include <SDL2/SDL_mixer.h>
-#include "../SoftLK-lib/include/SLK/SLK.h"
+#include <SLK/SLK.h>
 //-------------------------------------
 
 //Internal includes

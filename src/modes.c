@@ -15,7 +15,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 //External includes
 #include <SDL2/SDL_mixer.h>
-#include "../SoftLK-lib/include/SLK/SLK.h"
+#include <SLK/SLK.h>
 //-------------------------------------
 
 //Internal includes
@@ -52,7 +52,7 @@ void mode_0_update()
       terrain_needs_redraw = 0;
    }
 
-   if(SLK_key_pressed(SLK_KEY_S))
+   if(SLK_key_pressed(SLK_KEY_S)||SLK_gamepad_down(0,SLK_PAD_DOWN))
    {
       mode = 1;
 

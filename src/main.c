@@ -15,7 +15,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 //External includes
 #include <time.h>
-#include "../SoftLK-lib/include/SLK/SLK.h"
+#include <SLK/SLK.h>
 #include <SDL2/SDL_mixer.h>
 //-------------------------------------
 
@@ -49,7 +49,7 @@ Mix_Chunk *sound_fireball;
 
 int main(int argc, char **argv)
 {
-   SLK_setup(131,76,4,"LOWREZJAM 2020",0,SLK_WINDOW_MAX,0);
+   SLK_setup(64,64,4,"LOWREZJAM 2020",0,SLK_WINDOW_MAX,0);
    SLK_timer_set_fps(20);
 
    //Layer 0: menu/hud/front general
