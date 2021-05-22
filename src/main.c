@@ -12,6 +12,9 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 #include <time.h>
 #include <SLK/SLK.h>
 #include <SDL2/SDL_mixer.h>
+
+#define HLH_MALLOC_IMPLEMENTATION
+#include "HLH_malloc.h"
 //-------------------------------------
 
 //Internal includes
@@ -44,7 +47,7 @@ Mix_Chunk *sound_fireball;
 
 int main(int argc, char **argv)
 {
-   SLK_setup(64,64,4,"LOWREZJAM 2020",0,SLK_WINDOW_MAX,0);
+   SLK_setup(170,96,4,"LOWREZJAM 2020",0,SLK_WINDOW_MAX,0);
    SLK_timer_set_fps(20);
 
    //Layer 0: menu/hud/front general
