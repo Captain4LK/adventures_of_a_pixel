@@ -16,7 +16,7 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 //Internal includes
 #include "config.h"
 #include "map.h"
-#include "modes.h"
+#include "mode.h"
 #include "sound.h"
 #include "player.h"
 //-------------------------------------
@@ -25,19 +25,36 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 //-------------------------------------
 
 //Typedefs
+typedef enum
+{
+   GAME_TITLE
+}Game_mode;
 //-------------------------------------
 
 //Variables
-int mode;
+static Game_mode mode = 0;
 int terrain_needs_redraw;
 //-------------------------------------
 
 //Function prototypes
+static void mode_title_update();
 //-------------------------------------
 
 //Function implementations
 
-void mode_0_update()
+void mode_update()
+{
+   switch(mode)
+   {
+   case GAME_TITLE: mode_title_update(); break;
+   }
+}
+
+static void mode_title_update()
+{
+}
+
+/*void mode_0_update()
 {
    if(terrain_needs_redraw)
    {
@@ -88,5 +105,5 @@ void mode_1_update()
       maps_load();  
       terrain_needs_redraw = 1;
    }
-}
+}*/
 //-------------------------------------

@@ -16,7 +16,7 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 //Internal includes
 #include "config.h"
 #include "map.h"
-#include "modes.h"
+#include "mode.h"
 #include "sound.h"
 #include "player.h"
 //-------------------------------------

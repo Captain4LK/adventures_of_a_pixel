@@ -18,7 +18,7 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 #include "map.h"
 #include "player.h"
 #include "sound.h"
-#include "modes.h"
+#include "mode.h"
 //-------------------------------------
 
 //#defines

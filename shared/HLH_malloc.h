@@ -56,7 +56,7 @@ typedef struct
 void  HLH_malloc_default(HLH_malloc_instance *i);
 void  HLH_malloc_set_max_memory_used(HLH_malloc_instance *mi, int bytes);
 void  HLH_malloc_set_min_memory_required(HLH_malloc_instance *mi, int bytes);
-void  HLH_malloc_malloc_init(HLH_malloc_instance *mi);
+void  HLH_malloc_init(HLH_malloc_instance *mi);
 void *HLH_malloc(HLH_malloc_instance *mi, uint32_t size);
 void *HLH_realloc(HLH_malloc_instance *mi, void *ptr, uint32_t size);
 void  HLH_free(HLH_malloc_instance *mi, void *ptr);
@@ -95,7 +95,7 @@ void HLH_malloc_set_min_memory_required(HLH_malloc_instance *mi, int bytes)
    mi->malloc_min_size = bytes;
 }
 
-void HLH_malloc_malloc_init(HLH_malloc_instance *mi)
+void HLH_malloc_init(HLH_malloc_instance *mi)
 {
    if(mi->bmanage_total)
    {

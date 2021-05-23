@@ -12,10 +12,11 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 
 #define _MODES_H_
 
-extern int mode;
 extern int terrain_needs_redraw;
 
-void mode_0_update();
-void mode_1_update();
+//void mode_0_update();
+//void mode_1_update();
+
+void mode_update();
 
 #endif
