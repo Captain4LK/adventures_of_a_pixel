@@ -8,23 +8,19 @@ To the extent possible under law, the author(s) have dedicated all copyright and
 You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>. 
 */
 
-#ifndef _CONFIG_H_
+#ifndef _RESSOURCE_H_
 
-#define _CONFIG_H_
+#define _RESSOURCE_H_
 
-#define XRES 170
-#define YRES 96
-#define FPS 20 //Beyond cinematic
-#define MEM_MIN (1024*1024*8)
-#define MEM_MAX (1024*1024*16)
+typedef enum
+{
+   LUMP_ERROR, LUMP_PAL, LUMP_MUS, LUMP_JSON, LUMP_PAK, LUMP_TEX, LUMP_WAV,
+}Elump;
 
-#define BLACK SLK_color_create(0,0,0,255)
-
-#define RNG_TABLE_SIZE 512
-
-extern SLK_key config_jump;
-extern unsigned config_texture_timeout;
-
-void ini_parse(const char *path);
+void ressource_add(const char *path);
+void ressource_flush();
+void lump_add(const char *name, const char *path, Elump type);
+void *lump_get(const char *name, Elump type, unsigned *size);
+const char *lump_get_path(const char *name, Elump type);
 
 #endif

@@ -8,23 +8,15 @@ To the extent possible under law, the author(s) have dedicated all copyright and
 You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>. 
 */
 
-#ifndef _CONFIG_H_
+#ifndef _ASSETS_H_
 
-#define _CONFIG_H_
+#define _ASSETS_H_
 
-#define XRES 170
-#define YRES 96
-#define FPS 20 //Beyond cinematic
-#define MEM_MIN (1024*1024*8)
-#define MEM_MAX (1024*1024*16)
+extern SLK_Pal_sprite **textures;
 
-#define BLACK SLK_color_create(0,0,0,255)
-
-#define RNG_TABLE_SIZE 512
-
-extern SLK_key config_jump;
-extern unsigned config_texture_timeout;
-
-void ini_parse(const char *path);
+void assets_load_default();
+void assets_load_textures_begin();
+void assets_load_texture(uint16_t id);
+void assets_load_textures_end();
 
 #endif

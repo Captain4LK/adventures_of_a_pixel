@@ -1,25 +1,30 @@
-CC = gcc
+CC = gcc -O3 -s -flto
 CFLAGS+=-lSDL2_mixer -lm -Wall
+HEADERS = ../../src/config.h ../../src/util.h
+DEPENDENCIES = main.o util.o ressource.o config.o assets.o mode.o
 
-game: main.o player.o map.o mode.o util.o
+game: $(DEPENDENCIES)
 	gcc -o adventuresofapixel $^ -L../../SoftLK-lib/lib/unix/ -lSLK -lm -lSDL2 -lSDL2_mixer -lGL -Wall
 	chmod +x adventuresofapixel
 	mv adventuresofapixel ../../../bin/
 
-main.o: ../../src/main.c ../../src/config.h ../../src/player.h ../../src/map.h ../../src/mode.h ../../src/sound.h ../../src/util.h
-	$(CC) -O3 -c $< $(CFLAGS) 
+main.o: ../../src/main.c ../../src/ressource.h ../../src/assets.h ../../src/mode.h $(HEADERS)
+	$(CC) -c $< $(CFLAGS) 
 
-player.o: ../../src/player.c ../../src/config.h ../../src/player.h ../../src/map.h ../../src/mode.h ../../src/sound.h ../../src/util.h
-	$(CC) -O3 -c $< $(CFLAGS) 
+util.o: ../../src/util.c $(HEADERS)
+	$(CC) -c $< $(CFLAGS) 
 
-map.o: ../../src/map.c ../../src/config.h ../../src/player.h ../../src/map.h ../../src/mode.h ../../src/sound.h ../../src/util.h
-	$(CC) -O3 -c $< $(CFLAGS) 
+config.o: ../../src/config.c $(HEADERS)
+	$(CC) -c $< $(CFLAGS) 
 
-mode.o: ../../src/mode.c ../../src/config.h ../../src/player.h ../../src/map.h ../../src/mode.h ../../src/sound.h ../../src/util.h
-	$(CC) -O3 -c $< $(CFLAGS) 
+mode.o: ../../src/mode.c ../../src/mode.h $(HEADERS)
+	$(CC) -c $< $(CFLAGS) 
 
-util.o: ../../src/util.c ../../src/config.h ../../src/player.h ../../src/map.h ../../src/mode.h ../../src/sound.h ../../src/util.h
-	$(CC) -O3 -c $< $(CFLAGS) 
+ressource.o: ../../src/ressource.c ../../src/ressource.h $(HEADERS)
+	$(CC) -c $< $(CFLAGS) 
+
+assets.o: ../../src/assets.c ../../src/assets.h ../../src/ressource.h $(HEADERS)
+	$(CC) -c $< $(CFLAGS) 
 
 clean:
 	rm *.o ../../../bin/adventuresofapixel

@@ -11,18 +11,14 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 //External includes
 #include <time.h>
 #include <SLK/SLK.h>
-#include <SDL2/SDL_mixer.h>
-
-#include "../../shared/HLH_malloc.h"
 //-------------------------------------
 
 //Internal includes
 #include "config.h"
-#include "player.h"
-#include "mode.h"
-#include "sound.h"
-#include "map.h"
 #include "util.h"
+#include "ressource.h"
+#include "assets.h"
+#include "mode.h"
 //-------------------------------------
 
 //#defines
@@ -32,12 +28,6 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 //-------------------------------------
 
 //Variables
-int current_music;
-Mix_Music *music[2];
-
-Mix_Chunk *sound_jump;
-Mix_Chunk *sound_die;
-Mix_Chunk *sound_fireball;
 //-------------------------------------
 
 //Function prototypes
@@ -47,33 +37,15 @@ Mix_Chunk *sound_fireball;
 
 int main(int argc, char **argv)
 {
-   //Parse arguments
-   int alloc_size = 0;
-   for(int i = 1;i<argc;i++)
-   {
-      if(argv[i][0]=='-')
-      {
-         //Set custom allocator amount
-         if(argv[i][1]=='m'&&argv[i][2]=='b')
-            alloc_size = atoi(argv[++i]);
-      }
-   }
-
    //Initialize memory allocator
-   if(alloc_size==0)
-      alloc_size = 32;
-   alloc_size/=2;
-   HLH_malloc_default(&mem_game);
-   HLH_malloc_default(&mem_util);
-   HLH_malloc_set_max_memory_used(&mem_game,alloc_size*1024*1024);
-   HLH_malloc_set_min_memory_required(&mem_game,alloc_size*1024*512);
-   HLH_malloc_set_max_memory_used(&mem_util,alloc_size*1024*1024);
-   HLH_malloc_set_min_memory_required(&mem_util,alloc_size*1024*512);
-   HLH_malloc_init(&mem_game);
-   HLH_malloc_init(&mem_util);
+   util_malloc_init(MEM_MIN,MEM_MAX);
+   SLK_set_malloc(util_malloc);
+   SLK_set_free(util_free);
+   SLK_set_realloc(util_realloc);
 
-   SLK_setup(170,96,3,"Adventures of a pixel",0,SLK_WINDOW_MAX,0);
-   SLK_timer_set_fps(20); //Beyond cinematic
+   SLK_setup(XRES,YRES,3,"Adventures of a pixel",0,SLK_WINDOW_MAX,0);
+   SLK_mouse_show_cursor(0);
+   SLK_timer_set_fps(FPS);
 
    //Layer 0: menu/hud/front general
    SLK_layer_create(0,SLK_LAYER_PAL);
@@ -83,7 +55,7 @@ int main(int argc, char **argv)
    SLK_draw_pal_set_clear_index(0);
    SLK_draw_pal_clear();
 
-   //Layer 1: Damaging stuff
+   //Layer 1: foreground layer
    SLK_layer_create(1,SLK_LAYER_PAL);
    SLK_layer_activate(1,1);
    SLK_layer_set_dynamic(1,0);
@@ -91,7 +63,7 @@ int main(int argc, char **argv)
    SLK_draw_pal_set_clear_index(0);
    SLK_draw_pal_clear();
 
-   //Layer 3: Terrain/Player
+   //Layer 2: background layer
    SLK_layer_create(2,SLK_LAYER_PAL);
    SLK_layer_set_dynamic(2,0);
    SLK_layer_activate(2,1);
@@ -99,20 +71,20 @@ int main(int argc, char **argv)
    SLK_draw_pal_set_clear_index(0);
    SLK_draw_pal_clear();
 
-   //Init audio system
-   //I'm using SDL2_mixer since I don't need any
-   //advanced features
-   if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048)<0)
-        printf("Error: SDL_mixer failed to initialize! SDL_mixer Error: %s\n",Mix_GetError());
+   //Load ressources
+   ini_parse("settings.ini");
+   ressource_add("data/main.json");
+   assets_load_default();
 
-   //Load data
-   SLK_draw_pal_load_font("assets/cursive2.slk");
+   //util_compress_path("data/pal0.bin","out.4mb");
 
    while(SLK_core_running())
    {
       SLK_update();
       
       mode_update();
+      if(SLK_key_pressed(SLK_KEY_P))
+         util_malloc_report();
 
       SLK_render_update();
   }

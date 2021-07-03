@@ -9,16 +9,13 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 */
 
 //External includes
-#include <SDL2/SDL_mixer.h>
 #include <SLK/SLK.h>
 //-------------------------------------
 
 //Internal includes
 #include "config.h"
-#include "map.h"
+#include "util.h"
 #include "mode.h"
-#include "sound.h"
-#include "player.h"
 //-------------------------------------
 
 //#defines
@@ -27,7 +24,7 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 //Typedefs
 typedef enum
 {
-   GAME_TITLE
+   GAME_TITLE, GAME_CREDITS
 }Game_mode;
 //-------------------------------------
 
@@ -38,6 +35,7 @@ int terrain_needs_redraw;
 
 //Function prototypes
 static void mode_title_update();
+static void mode_credits_update();
 //-------------------------------------
 
 //Function implementations
@@ -47,11 +45,91 @@ void mode_update()
    switch(mode)
    {
    case GAME_TITLE: mode_title_update(); break;
+   case GAME_CREDITS: mode_credits_update(); break;
    }
 }
 
 static void mode_title_update()
 {
+   int x,y;
+   int selected = -1;
+   SLK_mouse_get_layer_pos(0,&x,&y);
+
+   //Input
+   if(y>=66&&y<78)
+   {
+      if(x>=6&&x<50)
+      {
+         selected = 0;
+         if(SLK_mouse_pressed(SLK_BUTTON_LEFT))
+            mode = GAME_CREDITS;
+      }
+      else if(x>=(XRES-32)/2-2&&x<(XRES-32)/2+34)
+      {
+         selected = 1;
+      }
+      else if(x>=XRES-42&&x<XRES-6)
+      {
+         selected = 2;
+         if(SLK_mouse_pressed(SLK_BUTTON_LEFT))
+            SLK_core_quit();
+      }
+   }
+
+   //Drawing
+   SLK_layer_set_current(0);
+   SLK_draw_pal_clear();
+
+   SLK_draw_pal_string((XRES-80)/2,8,1,"Adventures",15);
+   SLK_draw_pal_string((XRES-32)/2,18,1,"of a",15);
+   SLK_draw_pal_string((XRES-40)/2,28,1,"pixel",15);
+
+   SLK_draw_pal_string(8,68,1,"About",15);
+   SLK_draw_pal_string((XRES-32)/2,68,1,"Play",15);
+   SLK_draw_pal_string(XRES-40,68,1,"Quit",15);
+
+   SLK_draw_pal_rectangle(6,66,44,12,selected==0?161:15);
+   SLK_draw_pal_rectangle((XRES-32)/2-2,66,36,12,selected==1?161:15);
+   SLK_draw_pal_rectangle(XRES-42,66,36,12,selected==2?161:15);
+
+   SLK_draw_pal_index(x-1,y-1,161);
+   SLK_draw_pal_index(x-2,y-2,161);
+   SLK_draw_pal_index(x+1,y-1,161);
+   SLK_draw_pal_index(x+2,y-2,161);
+   SLK_draw_pal_index(x-1,y+1,161);
+   SLK_draw_pal_index(x-2,y+2,161);
+   SLK_draw_pal_index(x+1,y+1,161);
+   SLK_draw_pal_index(x+2,y+2,161);
+}
+
+static void mode_credits_update()
+{
+   int x,y;
+   int selected = -1;
+   SLK_mouse_get_layer_pos(0,&x,&y);
+
+   if(y>=YRES-18&&y<YRES-6&&x>=6&&x<42)
+   {
+      selected = 0;
+      if(SLK_mouse_pressed(SLK_BUTTON_LEFT))
+         mode = GAME_TITLE;
+   }
+
+   //Drawing
+   SLK_layer_set_current(0);
+   SLK_draw_pal_clear();
+
+   SLK_draw_pal_string(8,YRES-16,1,"Back",15);
+   SLK_draw_pal_rectangle(6,YRES-18,36,12,selected==0?161:15);
+
+   SLK_draw_pal_index(x-1,y-1,161);
+   SLK_draw_pal_index(x-2,y-2,161);
+   SLK_draw_pal_index(x+1,y-1,161);
+   SLK_draw_pal_index(x+2,y-2,161);
+   SLK_draw_pal_index(x-1,y+1,161);
+   SLK_draw_pal_index(x-2,y+2,161);
+   SLK_draw_pal_index(x+1,y+1,161);
+   SLK_draw_pal_index(x+2,y+2,161);
 }
 
 /*void mode_0_update()
