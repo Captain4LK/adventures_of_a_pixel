@@ -109,7 +109,7 @@ void lump_add(const char *name, const char *path, Elump type)
       printf("lump name too long (max 8 characters)\n");
    char ext[32] = {0};
    path_pop_ext(path,NULL,ext);
-   if(strncmp(ext,"json",32)==0)
+   if(strncmp(ext,"json",32)==0&&type==LUMP_JSON)
    {
       add_json_path(path);
       return;
@@ -223,6 +223,7 @@ static Elump string_to_elump(const char *t)
    case  3806790633606677507U: return LUMP_JSON;
    case  7818530539252466654U: return LUMP_TEX;
    case  8440912394771940537U: return LUMP_WAV;
+   case  5963007477566902785U: return LUMP_LIST;
    default:                    return LUMP_ERROR;
    }
 }

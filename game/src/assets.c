@@ -76,10 +76,10 @@ void assets_load_texture(uint16_t id)
 {
    if(textures==NULL)
    {
-      textures = util_malloc(sizeof(*textures)*UINT16_MAX);
-      textures_timeout = util_malloc(sizeof(*textures_timeout)*UINT16_MAX);
-      memset(textures,0,sizeof(*textures)*UINT16_MAX);
-      memset(textures_timeout,0,sizeof(*textures_timeout)*UINT16_MAX);
+      textures = util_malloc(sizeof(*textures)*(UINT16_MAX+1));
+      textures_timeout = util_malloc(sizeof(*textures_timeout)*(UINT16_MAX+1));
+      memset(textures,0,sizeof(*textures)*(UINT16_MAX+1));
+      memset(textures_timeout,0,sizeof(*textures_timeout)*(UINT16_MAX+1));
    }
 
    textures_timeout[id] = config_texture_timeout;
@@ -98,7 +98,7 @@ void assets_load_texture(uint16_t id)
    textures[id] = SLK_pal_sprite_create(n->width,n->height);
    for(int ty = 0;ty<n->height;ty++)
       for(int tx = 0;tx<n->width;tx++)
-         textures[id]->data[tx*n->height+ty] = n->data[ty*n->width+tx];
+         textures[id]->data[ty*n->width+tx] = n->data[ty*n->width+tx];
    SLK_pal_sprite_destroy(n);
    util_free(mem_pak);
    util_free(mem_decomp);

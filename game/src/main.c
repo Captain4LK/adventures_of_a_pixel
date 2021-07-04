@@ -19,6 +19,7 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 #include "ressource.h"
 #include "assets.h"
 #include "mode.h"
+#include "map_list.h"
 //-------------------------------------
 
 //#defines
@@ -74,9 +75,12 @@ int main(int argc, char **argv)
    //Load ressources
    ini_parse("settings.ini");
    ressource_add("data/main.json");
+   map_list_load();
    assets_load_default();
 
-   //util_compress_path("data/pal0.bin","out.4mb");
+   //SLK_Pal_sprite *p = SLK_pal_sprite_load("out.slk");
+   //SLK_pal_sprite_save("test.slk",p,0);
+   //util_compress_path("test.slk","out.4mb");
 
    while(SLK_core_running())
    {
