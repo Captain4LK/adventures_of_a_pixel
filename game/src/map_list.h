@@ -14,8 +14,11 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 
 typedef struct
 {
-   char title[13];
    uint16_t preview_id;
+   uint16_t map_id;
+   uint16_t pal_front_id;
+   uint16_t pal_back_id;
+   char title[13];
 }Map_entry;
 
 extern uint8_t map_list_size;

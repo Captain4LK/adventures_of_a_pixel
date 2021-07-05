@@ -18,5 +18,6 @@ void assets_load_default();
 void assets_load_textures_begin();
 void assets_load_texture(uint16_t id);
 void assets_load_textures_end();
+SLK_Palette *palette_load(void *mem, int32_t size);
 
 #endif

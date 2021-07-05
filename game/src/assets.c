@@ -34,7 +34,6 @@ static int8_t *textures_timeout = NULL;
 //-------------------------------------
 
 //Function prototypes
-static SLK_Palette *palette_load(void *mem, int32_t size);
 //-------------------------------------
 
 //Function implementations
@@ -53,7 +52,7 @@ void assets_load_default()
    util_free(mem_decomp);
 
    //Load palette
-   mem_pak = lump_get("PAL0",LUMP_PAL,&size_in);
+   mem_pak = lump_get("PAL00000",LUMP_PAL,&size_in);
    SLK_Palette *pal_new = palette_load(mem_pak,size_in);
    SLK_layer_set_palette(0,pal_new);
    SLK_layer_set_palette(1,pal_new);
@@ -67,7 +66,7 @@ void assets_load_textures_begin()
 {
    if(textures!=NULL&&textures_timeout!=NULL)
    {
-      for(int i = 0;i<UINT16_MAX;i++)
+      for(int i = 0;i<=UINT16_MAX;i++)
          textures_timeout[i]--;
    }
 }
@@ -120,12 +119,13 @@ void assets_load_textures_end()
    }
 }
 
-static SLK_Palette *palette_load(void *mem, int32_t size)
+SLK_Palette *palette_load(void *mem, int32_t size)
 {
    int pos = 0;
    SLK_Palette *p = malloc(sizeof(*p));
    p->used = *((uint8_t *)(mem)); pos++;
    p->used++;
+
    for(int i = 0;i<p->used;i++)
    {
       p->colors[i].r = *(((uint8_t *)mem)+pos); pos++;

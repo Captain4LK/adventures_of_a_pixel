@@ -9,37 +9,112 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 */
 
 //External includes
-#include <SDL2/SDL_mixer.h>
+#include <string.h>
 #include <SLK/SLK.h>
 //-------------------------------------
 
 //Internal includes
 #include "config.h"
+#include "util.h"
+#include "ressource.h"
+#include "assets.h"
 #include "map.h"
-#include "player.h"
-#include "sound.h"
-#include "mode.h"
 //-------------------------------------
 
 //#defines
 //-------------------------------------
 
 //Typedefs
+typedef struct
+{
+   uint8_t foreground[96*128];
+   uint8_t background[96*128];
+}Map_room_file;
 //-------------------------------------
 
 //Variables
-static SLK_RGB_sprite *sprites[4];
-Map world[64][64];
+//static SLK_RGB_sprite *sprites[4];
+//Map world[64][64];
+Map *map = NULL;
+static uint8_t room_count = 0;
+static uint8_t room_start = 0;
 //-------------------------------------
 
 //Function prototypes
-static void choose_new_dir(Enemie *e);
-static void map_parse_screen(SLK_RGB_sprite *screen, int x, int y);
+//static void choose_new_dir(Enemie *e);
+//static void map_parse_screen(SLK_RGB_sprite *screen, int x, int y);
 //-------------------------------------
 
 //Function implementations
 
-void maps_load()
+void map_load(int id, uint16_t pal_front_id, uint16_t pal_back_id)
+{
+   map_free();
+
+   map = util_malloc(sizeof(*map));
+   memset(map,0,sizeof(*map));
+
+   //Load map data
+   char tmp[64];
+   sprintf(tmp,"MAP%05d",id);
+   unsigned size_in;
+   int32_t size_out;
+   void *mem_pak, *mem_decomp;
+   mem_pak = lump_get(tmp,LUMP_MAP,&size_in);
+   mem_decomp = util_mem_decompress(mem_pak,size_in,&size_out);
+   int pos = 0;
+   room_count = *(((uint8_t *)mem_decomp)+pos); pos+=1;
+   room_start = *(((uint8_t *)mem_decomp)+pos); pos+=1;
+   for(int i = 0;i<room_count;i++)
+   {
+      map->rooms[i] = util_malloc(sizeof(*map->rooms[i]));
+      memcpy(map->rooms[i],mem_decomp+pos,sizeof(*map->rooms[i]));
+      pos+=sizeof(*map->rooms[i]);
+   }
+   util_free(mem_pak);
+   util_free(mem_decomp);
+
+   //Load palettes
+   sprintf(tmp,"PAL%05d",pal_front_id);
+   mem_pak = lump_get(tmp,LUMP_PAL,&size_in);
+   map->pal_foreground = palette_load(mem_pak,size_in);
+   util_free(mem_pak);
+   sprintf(tmp,"PAL%05d",pal_back_id);
+   mem_pak = lump_get(tmp,LUMP_PAL,&size_in);
+   map->pal_background = palette_load(mem_pak,size_in);
+   util_free(mem_pak);
+   SLK_layer_set_palette(1,map->pal_foreground);
+   SLK_layer_set_palette(2,map->pal_background);
+
+   //Arrange map
+   map->start = map->rooms[room_start];
+}
+
+void map_free()
+{
+   if(map==NULL)
+      return;
+
+   for(int i = 0;i<256;i++)
+   {
+      if(map->rooms[i]!=NULL)
+         util_free(map->rooms[i]);
+      map->rooms[i] = NULL;
+   }
+
+   if(map->pal_foreground!=NULL)
+      util_free(map->pal_foreground);
+   map->pal_foreground = NULL;
+   if(map->pal_background!=NULL)
+      util_free(map->pal_background);
+   map->pal_background = NULL;
+
+   if(map!=NULL)
+      util_free(map);
+   map = NULL;
+}
+
+/*void maps_load()
 {
    SLK_RGB_sprite *map_sheet = SLK_rgb_sprite_load("assets/map_sheet.png");
    for(int x = 0;x<64;x++)
@@ -451,5 +526,5 @@ static void map_parse_screen(SLK_RGB_sprite *screen, int x, int y)
    //Create enemies
    world[y][x].enemies = malloc(sizeof(Enemie)*world[y][x].num_enemies);
    world[y][x].num_enemies = 0;
-}
+}*/
 //-------------------------------------

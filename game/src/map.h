@@ -12,7 +12,27 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 
 #define _MAP_H_
 
+typedef struct Map_room
+{
+   uint8_t foreground[96*128];
+   uint8_t background[96*128];
+   struct Map_room *up, *down, *left, *right;
+}Map_room;
+
 typedef struct
+{
+   Map_room *rooms[256];
+   SLK_Palette *pal_background;
+   SLK_Palette *pal_foreground;
+   Map_room *start;
+}Map;
+
+extern Map *map;
+
+void map_load(int id, uint16_t pal_front_id, uint16_t pal_back_id);
+void map_free();
+
+/*typedef struct
 {
    int x;
    int y;
@@ -65,6 +85,6 @@ SLK_Color map_get_pixel(int map_x, int map_y, int x, int y);
 SLK_Color damage_map_get_pixel(int map_x, int map_y, int x, int y);
 void map_update();
 void map_update_fireballs();
-void map_update_enemies();
+void map_update_enemies();*/
 
 #endif

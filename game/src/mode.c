@@ -16,6 +16,7 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 #include "config.h"
 #include "util.h"
 #include "map_list.h"
+#include "map.h"
 #include "assets.h"
 #include "mode.h"
 //-------------------------------------
@@ -34,7 +35,6 @@ typedef enum
 
 //Variables
 static Game_mode mode = 0;
-int terrain_needs_redraw;
 //-------------------------------------
 
 //Function prototypes
@@ -161,6 +161,11 @@ static void mode_epsel_update()
    else if(y>=YRES-18&&y<YRES-6&&x>=XRES-42&&x<XRES-6)
    {
       selected = 1;
+      if(SLK_mouse_pressed(SLK_BUTTON_LEFT))
+      {
+         map_load(map_entries[ep_selected].map_id,map_entries[ep_selected].pal_front_id,map_entries[ep_selected].pal_back_id);
+         mode = GAME_GAME;
+      }
    }
    else if(x>=32&&x<68)
    {

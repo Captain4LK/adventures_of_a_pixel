@@ -56,6 +56,9 @@ void map_list_load()
       strncpy(map_entries[i].title,title,12);
       map_entries[i].title[12] = '\0';
       map_entries[i].preview_id = (uint16_t)HLH_json_get_object_integer(el,"preview_id",0);
+      map_entries[i].map_id = (uint16_t)HLH_json_get_object_integer(el,"map_id",0);
+      map_entries[i].pal_front_id = (uint16_t)HLH_json_get_object_integer(el,"pal_front_id",0);
+      map_entries[i].pal_back_id = (uint16_t)HLH_json_get_object_integer(el,"pal_back_id",0);
    }
 
    HLH_json_free(root);

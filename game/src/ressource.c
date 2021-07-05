@@ -224,6 +224,7 @@ static Elump string_to_elump(const char *t)
    case  7818530539252466654U: return LUMP_TEX;
    case  8440912394771940537U: return LUMP_WAV;
    case  5963007477566902785U: return LUMP_LIST;
+   case  2199261959994660209U: return LUMP_MAP;
    default:                    return LUMP_ERROR;
    }
 }

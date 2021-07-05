@@ -81,6 +81,7 @@ int main(int argc, char **argv)
    //SLK_Pal_sprite *p = SLK_pal_sprite_load("out.slk");
    //SLK_pal_sprite_save("test.slk",p,0);
    //util_compress_path("test.slk","out.4mb");
+   //util_compress_path("test.bin","out.4mb");
 
    while(SLK_core_running())
    {
